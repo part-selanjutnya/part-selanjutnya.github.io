@@ -5,8 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moviefy - Streaming & Katalog Film HD Gratis</title>
     
-    <!-- KODE VERIFIKASI MONETAG KAMU -->
+    <!-- VERIFIKASI MONETAG -->
     <meta name="monetag" content="6d9aabad5b292a92d8372ea08ac3f832">
+
+    <!-- SCRIPT IKLAN MULTITAG MONETAG -->
+    <script src="https://quge5.com/88/tag.min.js" data-zone="299384" async data-cfasync="false"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -37,12 +40,6 @@
         }
         .hero h1 { font-size: 28px; margin-bottom: 8px; color: #ffffff; }
         .hero p { color: #cbd5e1; max-width: 550px; font-size: 14px; line-height: 1.5; }
-
-        /* Slot Iklan Banner */
-        .ad-banner-space { 
-            background: #1e293b; border: 1px dashed #475569; text-align: center; 
-            padding: 15px; margin: 20px 5%; border-radius: 10px; color: #64748b; font-size: 13px; 
-        }
 
         /* Container & Categories */
         .container { padding: 0 5%; }
@@ -114,11 +111,6 @@
     <div class="hero">
         <h1>Unlimited Movies & Streaming</h1>
         <p>Nikmati ribuan koleksi film aksi, horor, anime, dan serial pilihan kualitas HD secara gratis.</p>
-    </div>
-
-    <!-- IKLAN BANNER ATAS -->
-    <div class="ad-banner-space">
-        <i class="fas fa-rectangle-ad"></i> Space Iklan Banner Monetag / Adsterra
     </div>
 
     <div class="container">
@@ -215,6 +207,7 @@
         }
 
         function openSmartLink() {
+            // Jika sudah ada Direct Link Monetag / Adsterra, ganti URL di bawah ini:
             const smartLink = "https://google.com"; 
             window.open(smartLink, '_blank');
         }
