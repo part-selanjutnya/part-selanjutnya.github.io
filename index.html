@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moviefy - Streaming & Katalog Film HD Gratis</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- ========================================================= -->
+    <!-- CODE POPUNDER MONETAG / ADSTERRA (NANTI DITEMPEL DI SINI) -->
+    <!-- ========================================================= -->
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
+        body { background-color: #0f172a; color: #f8fafc; padding-bottom: 50px; }
+        a { text-decoration: none; color: inherit; }
+
+        /* Header Nav */
+        header { 
+            background: #1e293b; padding: 15px 5%; display: flex; 
+            justify-content: space-between; align-items: center; 
+            position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            border-bottom: 1px solid #334155;
+        }
+        .logo { font-size: 24px; font-weight: 800; color: #6366f1; display: flex; align-items: center; gap: 8px; letter-spacing: 0.5px; }
+        .search-box { position: relative; width: 220px; }
+        .search-box input { 
+            width: 100%; padding: 8px 15px 8px 35px; border-radius: 20px; 
+            border: 1px solid #334155; background: #0f172a; color: white; outline: none; font-size: 13px;
+        }
+        .search-box i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 12px; }
+
+        /* Hero Banner */
+        .hero { 
+            background: linear-gradient(to right, rgba(15,23,42,0.95), rgba(15,23,42,0.6)), url('https://picsum.photos/1200/500?random=10') center/cover; 
+            padding: 50px 5%; margin-bottom: 25px; border-radius: 0 0 20px 20px; 
+        }
+        .hero h1 { font-size: 28px; margin-bottom: 8px; color: #ffffff; }
+        .hero p { color: #cbd5e1; max-width: 550px; font-size: 14px; line-height: 1.5; }
+
+        /* Slot Iklan Banner */
+        .ad-banner-space { 
+            background: #1e293b; border: 1px dashed #475569; text-align: center; 
+            padding: 15px; margin: 20px 5%; border-radius: 10px; color: #64748b; font-size: 13px; 
+        }
+
+        /* Container & Categories */
+        .container { padding: 0 5%; }
+        .category-tabs { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 20px; }
+        .tab-btn { 
+            background: #1e293b; color: #cbd5e1; border: 1px solid #334155; 
+            padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 600; 
+            cursor: pointer; white-space: nowrap; transition: 0.3s;
+        }
+        .tab-btn.active, .tab-btn:hover { background: #6366f1; color: white; border-color: #6366f1; }
+
+        .section-title { font-size: 18px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; border-left: 4px solid #6366f1; padding-left: 10px; }
+        
+        /* Grid Film */
+        .movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 18px; }
+        .movie-card { 
+            background: #1e293b; border-radius: 12px; overflow: hidden; 
+            transition: transform 0.3s ease, border-color 0.3s; cursor: pointer; border: 1px solid #334155; 
+        }
+        .movie-card:hover { transform: translateY(-5px); border-color: #6366f1; }
+        .poster-wrapper { position: relative; width: 100%; height: 220px; overflow: hidden; }
+        .poster-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        .rating-tag { 
+            position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.85); 
+            color: #f59e0b; padding: 3px 7px; border-radius: 6px; font-size: 11px; font-weight: bold; 
+        }
+        .quality-tag { 
+            position: absolute; top: 8px; left: 8px; background: #6366f1; 
+            color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; 
+        }
+        .movie-info { padding: 10px; }
+        .movie-title { font-size: 13px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
+        .movie-genre { font-size: 11px; color: #94a3b8; }
+
+        /* Modal Pemutar Film */
+        .modal { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; padding: 15px; 
+        }
+        .modal-content { 
+            background: #1e293b; border-radius: 15px; width: 100%; max-width: 650px; 
+            overflow: hidden; position: relative; border: 1px solid #334155; 
+        }
+        .modal-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; }
+        .close-modal { font-size: 20px; cursor: pointer; color: #94a3b8; }
+        .player-box { width: 100%; height: 300px; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        .play-btn-large { font-size: 50px; color: #6366f1; cursor: pointer; transition: 0.2s; }
+        .play-btn-large:hover { transform: scale(1.1); color: #818cf8; }
+        .modal-body { padding: 15px; }
+
+        @media (max-width: 600px) {
+            .movie-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
+            .poster-wrapper { height: 170px; }
+            .hero h1 { font-size: 22px; }
+            .player-box { height: 200px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo"><i class="fas fa-film"></i> Moviefy</div>
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" onkeyup="filterMovies()" placeholder="Cari film...">
+        </div>
+    </header>
+
+    <div class="hero">
+        <h1>Unlimited Movies & Streaming</h1>
+        <p>Nikmati ribuan koleksi film aksi, horor, anime, dan serial pilihan kualitas HD secara gratis.</p>
+    </div>
+
+    <!-- IKLAN BANNER ATAS -->
+    <div class="ad-banner-space">
+        <i class="fas fa-rectangle-ad"></i> Space Iklan Banner Monetag / Adsterra
+    </div>
+
+    <div class="container">
+        <!-- Tab Kategori -->
+        <div class="category-tabs">
+            <button class="tab-btn active" onclick="filterCategory('all')">Semua</button>
+            <button class="tab-btn" onclick="filterCategory('Aksi')">Aksi</button>
+            <button class="tab-btn" onclick="filterCategory('Horor')">Horor</button>
+            <button class="tab-btn" onclick="filterCategory('Anime')">Anime</button>
+            <button class="tab-btn" onclick="filterCategory('Drama')">Drama</button>
+        </div>
+
+        <div class="section-title">Trending Minggu Ini</div>
+        
+        <div class="movie-grid" id="movieGrid">
+            <!-- Data film dimuat via JavaScript -->
+        </div>
+    </div>
+
+    <!-- Modal Nonton Film -->
+    <div class="modal" id="movieModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Judul Film</h3>
+                <span class="close-modal" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="player-box">
+                <i class="fas fa-play-circle play-btn-large" onclick="openSmartLink()"></i>
+                <p style="margin-top: 10px; font-size: 13px; color: #cbd5e1;">Klik tombol play untuk mulai streaming</p>
+            </div>
+            <div class="modal-body">
+                <p id="modalGenre" style="color: #6366f1; font-size: 12px; font-weight: bold; margin-bottom: 5px;"></p>
+                <p style="font-size: 13px; color: #94a3b8;">Kualitas: HD 1080p | Subtitle: Indonesia</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const movies = [
+            { id: 1, title: "Cyberpunk Legacy", genre: "Aksi", rating: "8.5", img: "https://picsum.photos/300/450?random=1" },
+            { id: 2, title: "Malam Horor Slawi", genre: "Horor", rating: "7.9", img: "https://picsum.photos/300/450?random=2" },
+            { id: 3, title: "Demon Slayer Movie", genre: "Anime", rating: "9.1", img: "https://picsum.photos/300/450?random=3" },
+            { id: 4, title: "Zombie Party 2", genre: "Aksi", rating: "8.0", img: "https://picsum.photos/300/450?random=4" },
+            { id: 5, title: "Kisah Cinta di Tegal", genre: "Drama", rating: "8.3", img: "https://picsum.photos/300/450?random=5" },
+            { id: 6, title: "Ritual Desa Gaib", genre: "Horor", rating: "7.5", img: "https://picsum.photos/300/450?random=6" }
+        ];
+
+        function renderMovies(data) {
+            const grid = document.getElementById('movieGrid');
+            grid.innerHTML = '';
+            data.forEach(movie => {
+                grid.innerHTML += `
+                    <div class="movie-card" onclick="openModal('${movie.title}', '${movie.genre}')">
+                        <div class="poster-wrapper">
+                            <span class="quality-tag">HD</span>
+                            <span class="rating-tag"><i class="fas fa-star"></i> ${movie.rating}</span>
+                            <img src="${movie.img}" alt="${movie.title}">
+                        </div>
+                        <div class="movie-info">
+                            <div class="movie-title">${movie.title}</div>
+                            <div class="movie-genre">${movie.genre}</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function filterCategory(category) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (category === 'all') {
+                renderMovies(movies);
+            } else {
+                const filtered = movies.filter(m => m.genre === category);
+                renderMovies(filtered);
+            }
+        }
+
+        function filterMovies() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = movies.filter(m => m.title.toLowerCase().includes(query));
+            renderMovies(filtered);
+        }
+
+        function openModal(title, genre) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalGenre').innerText = 'Genre: ' + genre;
+            document.getElementById('movieModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('movieModal').style.display = 'none';
+        }
+
+        function openSmartLink() {
+            // URL Direct Link / SmartLink Monetag/Adsterra akan ditempel di sini
+            const smartLink = "https://google.com"; 
+            window.open(smartLink, '_blank');
+        }
+
+        window.onload = () => renderMovies(movies);
+    </script>
+</body>
+</html>
